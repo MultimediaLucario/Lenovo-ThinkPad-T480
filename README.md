@@ -14,14 +14,12 @@
 <p align="center">
    <strong>Status: Maintained</strong>
    <br />
-   <strong>Version: </strong>2.1
+   <a href="https://github.com/tetenc555/Opencore-Thinkpad-T480/releases"><strong>Download now »</strong></a>
    <br />
-   <a href="https://github.com/MultimediaLucario/Lenovo-ThinkPad-T480/releases"><strong>Download now »</strong></a>
-   <br />
-   <a href="https://github.com/MultimediaLucario/Lenovo-ThinkPad-T480-Kaby-Lake-Edition"><strong>Lenovo ThinkPad T480 Kaby Lake EFI »</strong></a>
-   <br />
-   <a href="https://github.com/MultimediaLucario/Lenovo-ThinkPad-T480/issues">Report Bug</a>
+   <a href="https://github.com/tetenc555/Opencore-Thinkpad-T480/issues">Report Bug</a>
    <a href="https://github.com/valnoxy/t480-oc/blob/main/CHANGELOG.md">View Changelog</a>
+   ·
+   <a href="https://www.youtube.com/watch?v=thYDWyJuUq4">YouTube Video</a>
   </p>
 </p>
 </br>
@@ -30,43 +28,42 @@
 This guide is only for the Lenovo ThinkPad T480. I am NOT responsible for any harm you cause to your device. This guide is provided "as-is" and all steps taken are done at your own risk.
 
 > The ACPI patches and the style of this README are from [EETagent](https://github.com/EETagent/T480-OpenCore-Hackintosh).
+> This repository is forked from [MultimediaLucario](https://github.com/MultimediaLucario/Lenovo-ThinkPad-T480) and a bit tweaked here and there, please checkout his fork too.
+
+> [!IMPORTANT]
+> Intel WiFi with Airportitlwm currently doesn't work under macOS Sequoia! Use the HeliPort version instead.
+> I recommend switching to an Broadcom card. I will use BCM94360NG and will configure this EFI mainly to run the newer macOS with this card.
+
+> [!NOTE]
+> The instructions for installing macOS have been moved [to the wiki](https://github.com/valnoxy/t480-oc/wiki).
+
 
 &nbsp;
 
+## 💻 Tested devices
+Some users have reported that similar ThinkPads are compatible with this OpenCore configuration. Here is a list of these devices:
+
+- Lenovo ThinkPad T580
+- [Lenovo ThinkPad X280](https://github.com/valnoxy/t480-oc/discussions/47)
+
 ## Introduction
-
-### EFI folders
-
-This repo includes multiple EFI configuations for different macOS Versions.
-
-| EFI               | Description                                                               | Type      |
-| ----------------- | ------------------------------------------------------------------------- | --------- |
-| `EFI - Intel`     | Supports macOS Ventura (using Airportitlwm)		                | `Stable`  |
-| `EFI - HeliPort`  | Supports every macOS Version, Requires HeliPort app      			| `Stable`  |
-| `EFI - Broadcom`  | Supports every macOS Version (except Sonoma)		                | `Beta`    |
-| `EFI - Sonoma`    | Supports macOS Sonoma (using Itlwm and HeliPort)				| `Stable`  |
-| `EFI - Sequoia`   | Supports macOS Sequoia (using Itlwm and HeliPort)                         | `Beta`    |         
-
-> **Note** The Broadcom configuration is not stable. Use ```EFI``` instead for a better experience (you can also disable Airportitlwm).
-
-<a href="https://github.com/OpenIntelWireless/HeliPort/releases"><strong>
-Download HeliPort app »</strong></a>
 
 <details>
 <summary><strong>💻 My Hardware</strong></summary>
 <br>
 These are the Hardware component I use. But this OpenCore configuation <strong>should still work</strong> with your device, even if the components are not equal.
 
-> **Note** Check the model of your WiFi & Bluetooth card. Intel cards should be compatible with itlwm (or AirportItlwm). If your card is from another manufacturer, please check if your card supports macOS.
+Check the model of your WiFi & Bluetooth card. Intel cards should be compatible with itlwm (or AirportItlwm). If your card is from another manufacturer, please check if your card supports macOS. macOS Sonoma no longer supports Broadcom Wifi cards.
 
 | Category  | Component                            |
 | --------- | ------------------------------------ |
-| CPU       | Intel Core i5-8350U                  |
-| GPU       | Intel UHD Graphics 620               |
-| SSD       | Pioneer APS 1TB SATA SSD		   |
-| Memory    | 24GB DDR4 2400Mhz                    |
-| Camera    | 720p Camera                          |
-| WiFi & BT | Intel 18265 Wifi 	                   |
+| CPU       | Intel Core i7-8650U                  |
+| GPU       | Intel UHD Graphics 620 / NVIDIA GeForce MX150 (Disabled on macOS, works in Windows via BootCamp)|
+| SSD       | LiteOn NVME SSD 512GB		   |
+| Memory    | 16GB DDR4 2400Mhz                    |
+| Camera    | Camera with Windows Hello Face Recognition (only the camera works on macOS, works in Windows via BootCamp)|
+| WiFi & BT | Intel 18265 Wifi(for now) 	              |
+| Keyboard  | Backlight Keyboard |
 
 </details>  
 
@@ -99,15 +96,6 @@ These are the Hardware component I use. But this OpenCore configuation <strong>s
 I do not endorse or condone the use of pre-configured Hackintosh Distros because not only they cause unnecessary harm to your machine but it is considered to be a form of **Software Piracy**. Software Piracy is a serious crime according to copyright law and is punishable for up to 10 years in prison. 
 </details>
 
-
-
-<details>  
-<summary><strong> ⚠️ Important Information for any i7 and/or macOS Sonoma Users ⚠️ </strong></summary>
-</br>
-	
-### 🛜 AirPortItlwm is still not stable yet! 🛜
-If you're using a ThinkPad T480, T480s or X280 that either is rocking an Intel Core i7 CPU and/or is running macOS Sonoma, please be aware that the ```AirPortItlwm``` kext is **NOT STABLE** yet. What I mean is that while the kext actually functions, **you will not be able to access any iServices (iMessage, FaceTime,etc.).** In order to have any access to iServices, please use the ```itlwm``` kext along with the ```HeliPort``` application until the ```AirPortItlwm``` kext is updated.
-</details>
 
 
 <details>  
@@ -166,6 +154,10 @@ python macrecovery.py -b Mac-CFF7D910A743CAAF -m 00000000000000000 download
 
 After the install media was created, we need to make the USB drive bootable.
 
+### Updating Thunderbolt Firmware
+To have thunderbolt fully working on macOS, you need to make sure you have FW23 (latest). To do that, right click on Thunderbolt Control Center in system tray and, in the About section, check the FW. You should update cause Lenovo also [fixes a serious problem](https://www.notebookcheck.net/ThinkPad-Thunderbolt-3-failure-What-s-happening-why-it-s-happening-and-how-to-fix-it.451207.0.html) on this new FW. You can either do the update via Lenovo Vantage or following [these instructions](https://github.com/pierpaolodimarzo/ThinkPad-T480/issues/9)
+Thanks pierpaolodimarzo for the help on making thunderbolt work on this machine! - Becca 
+
 ### Configure and install OpenCore
 Download the EFI folder from this repo, you will find the latest files under the release tab or just download the repo as it is. Move the folder to the root of your pendrive (e.g. J:\) and rename the folder to ```EFI```.
 
@@ -196,7 +188,6 @@ Please enable / disable the following patches depending on what is installed in 
 | SSDT              | Affected device            | Description                                                |
 | ----------------- | -------------------------- | ---------------------------------------------------------- |
 | SSDT-ARPT.aml     | Broadcom cards             | Disable Broadcom card during sleep                         |
-| SSDT-OFFTB.aml    | Thunderbolt                | Disable Thunderbolt                                        |
 | SSDT-OFFGDGPU.aml | NVIDIA GeForce MX 150      | Disable NVIDIA GPU (necessary if installed)                |
 
 ### Install OpenCore
@@ -212,7 +203,7 @@ After you've finished with the neccesary tweaks, you have to copy the EFI folder
 The bios must be properly configured prior to installing macOS.
 In Security menu, set the following settings:
 
--  `Security > Security Chip`: must be **Disabled**
+-  `Security > Security Chip`: **Enabled** did it for Windows 11 and it worked fine. You should disable if you're not using Windows.
 -  `Memory Protection > Execution Prevention`: must be **Enabled**
 -  `Virtualization > Intel Virtualization Technology`: must be **Enabled**
 -  `Virtualization > Intel VT-d Feature`: must be **Enabled**
@@ -228,10 +219,11 @@ In Startup menu, set the following options:
 
 In Thunderbolt menu, set the following options:
 
--  `Thunderbolt BIOS Assist Mode`: **UEFI Only**
--  `Wake by Thunderbolt(TM) 3`: **No**
--  `Security Level`: **No**
--  `Support in Pre Boot Environment > Thunderbolt(TM) device`: **No**
+-  `Thunderbolt BIOS Assist Mode`: **Disabled**
+-  `Wake by Thunderbolt(TM) 3`: **Disabled**
+-  `Security Level`: **Disabled**
+-  `Support in Pre Boot Environment > Thunderbolt(TM) device`: **Enabled**
+
 
 Now you can go through the install.
 
@@ -329,7 +321,9 @@ After creating the install media, copy your EFI folder to the EFI partition of y
 - [X] Handoff / Universal Clipboard
 - [X] Sidecar (Cable) / AirPlay to Mac
 - [X] SIP / FireVault 2
-- [X] USB-C
+- [X] USB-C 3.1 with DisplayPort
+- [X] Thunderbolt 3
+- [X] Dualbooting Windows (with OpenCore and BootCamp)
 
 </details>
 
@@ -340,9 +334,11 @@ After creating the install media, copy your EFI folder to the EFI partition of y
 - [ ] Safari DRM ```Use Chromium powered Browser or Firefox to watch Amazon Prime Video, Netflix, Disney+ and others```
 - [ ] AirDrop & Continuity
 - [ ] Fingerprint Reader (Disabled with NoTouchID kext)
-- [ ] Thunderbolt 3
+- [ ] Facial Recognition (Camera works fine on macOS)
 - [ ] Sidecar Wireless
 - [ ] Apple Watch Unlock
+- [ ] Dualbooting Windows / Linux (with OpenCore) 
+  - Theoretically this works, but the ACPI patches can make the operating system unstable.
 
 </details>
 
@@ -351,7 +347,8 @@ After creating the install media, copy your EFI folder to the EFI partition of y
 </br>
 
 - [ ] WWAN
-- [ ] Dualbooting Windows / Linux (with OpenCore)
+- [ ] Dualbooting Linux (with OpenCore)
+
 
 </details>
 
@@ -369,7 +366,7 @@ This repo is licensed under the [MIT License](https://github.com/valnoxy/t480-oc
 OpenCore is licensed under the [BSD 3-Clause License](https://github.com/acidanthera/OpenCorePkg/blob/master/LICENSE.txt).
 
 <hr>
-<h6 align="center">© 2018 - 2022 valnoxy. All Rights Reserved. 
+<h6 align="center">© 2018 - 2024 valnoxy. All Rights Reserved. 
 <br>
 By Jonas Günner &lt;jonas@exploitox.de&gt;</h6>
 <p align="center">
